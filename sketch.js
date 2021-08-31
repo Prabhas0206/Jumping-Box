@@ -1,117 +1,68 @@
-
-const Engine = Matter.Engine;
-const World = Matter.World;
-const Bodies = Matter.Bodies;
-const Body = Matter.Body;
-const Render = Matter.Render;
-const Constraint=Matter.Constraint;
-
-var tree, stone,ground;
-var mango1,mango2,mango3,mango4,mango5,mango6,mango7,mango8,mango9,mango10,mango11,mango12;
-var world,boy;
-
-
-var launcher;
+var canvas;
+var block1,block2,block3,block4;
+var ball, edges;
+var music;
 
 function preload(){
-	boy=loadImage("images/boy.png");
+    // load sound here
+    music=loadSound("music.mp3")
 }
 
-function setup() {
-	createCanvas(1300, 600);
-	engine = Engine.create();
-	world = engine.world;
 
-	stone = new Stone(235,420,30); 
+function setup(){
+    canvas = createCanvas(800,600);
 
-	mango1 = new Mango(1100,100,30);
-  mango2 = new Mango(1170,130,30);
-	mango3 = new Mango(1010,140,30);
-	mango4 = new Mango(1000,70,30);
-	mango5 = new Mango(1100,70,30);
-	mango6 = new Mango(1000,230,30);
-	mango7 = new Mango(900,230,40);
-	mango8 = new Mango(1140,150,40);
-	mango9 = new Mango(1100,230,40);
-	mango10 = new Mango(1200,200,40);
-	mango11 = new Mango(1120,50,40);
-	mango12 = new Mango(900,160,40);
+    block1 = createSprite(0,580,360,30);
+    block1.shapeColor = "blue";
 
-	tree = new Tree(1050,580);
-	ground = new Ground(width/2,600,width,20);
+    block2 = createSprite(295,580,200,30);
+    block2.shapeColor = "orange";
+    
+    block3 = createSprite(515,580,200,30);
+    block3.shapeColor = "green";
 
-  //create launcher with stone as bodyA
-  launcher = new Launcher(stone.body,{x:mouseX,y:mouseY});
+    block4 = createSprite(740,580,200,30);
+    block4.shapeColor = "red";
+    //create two more blocks i.e. block3 and block4 here
 
-	Engine.run(engine);
+    ball = createSprite(random(20,750),100, 40,40);
+    ball.shapeColor = rgb(255,255,255);
+    //write code to add velocityX and velocityY
+    ball.velocityX=5;
+    ball.velocityY=5;
+
 }
 
 function draw() {
+    background(rgb(169,169,169));
+    edges=createEdgeSprites();
+    ball.bounceOff(edges);
 
-  background(230);
-  Engine.update(engine);
-  textSize(25);
-  text("Hit the mangoes with the stone!!",50 ,50);
-  image(boy ,200,340,200,300);
-  
-
-  tree.display();
-  stone.display();
-
-
-  mango1.display();
-  mango2.display();
-  mango3.display();
-  mango4.display();
-  mango6.display();
-  mango7.display();
-  mango8.display();
-  mango9.display();
-  mango10.display();
-  mango11.display();
-  mango12.display();
-
-  stone.display();
-  ground.display();
-  launcher.display();
-
-
-  detectollision(stone,mango1);
-  detectollision(stone,mango2);
-  detectollision(stone,mango3);
-  detectollision(stone,mango4);
-  detectollision(stone,mango5);
-  detectollision(stone,mango6);
-  detectollision(stone,mango7);
-  detectollision(stone,mango8);
-  detectollision(stone,mango9);
-  detectollision(stone,mango10);
-  detectollision(stone,mango11);
-  detectollision(stone,mango12);
-}
-
-function mouseDragged()
-{
-  // Set position of stone when mouse is dragged
-	Matter.Body.setPosition(stone.body, {x:mouseX, y:mouseY});
-}
-
-function mouseReleased()
-{
-	launcher.fly();
-}
-
-
-
-function detectollision(lstone,lmango){
-
-  mangoBodyPosition=lmango.body.position
-  stoneBodyPosition=lstone.body.position
-  
-  var distance=dist(stoneBodyPosition.x, stoneBodyPosition.y, mangoBodyPosition.x, mangoBodyPosition.y)
-  	if(distance<=lmango.r+lstone.r)
-    {
-  	  Matter.Body.setStatic(lmango.body,false);
+    
+    //write code to bounce off ball from the block1 
+    if(block1.isTouching(ball) && ball.bounceOff(block1)){
+        ball.shapeColor = "blue";
+        music.play();
     }
 
-  }
+
+
+    if(block2.isTouching(ball)){
+        ball.shapeColor = "orange";
+        //write code to set velocityX and velocityY of ball as 0
+ball.velocityX=0;
+ball.velocityY=0;
+        music.stop();
+        //write code to stop music
+    }
+
+    //write code to bounce off ball from the block3
+    if(block3.isTouching(ball) && ball.bounceOff(block3)){
+        ball.shapeColor = "green";
+    }
+    //write code to bounce off ball from the block4
+    if(block4.isTouching(ball) && ball.bounceOff(block4)){
+        ball.shapeColor = "red";
+    }
+    drawSprites();
+}
